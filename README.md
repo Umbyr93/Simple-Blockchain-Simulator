@@ -1,1 +1,1 @@
-# Simple-Blockchain-Simulator
+# Simple Blockchain Simulator
