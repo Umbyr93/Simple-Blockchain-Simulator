@@ -1,20 +1,25 @@
-package ur.project.simpleblockchainsimulator.chain;
+package ur.project.simpleblockchainsimulator.core;
 
+import lombok.Getter;
 import ur.project.simpleblockchainsimulator.transfer.Transaction;
+import ur.project.simpleblockchainsimulator.utils.Config;
+import ur.project.simpleblockchainsimulator.utils.ConfigConst;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Blockchain {
-    public static int BLOCKS_SIZE = 2;
-    public static int MINING_DIFFICULTY = 3;
-    public static int INCREASE_DIFFICULTY_AFTER = 15;
+    @Getter
+    private final int blocksSize = Config.getInt(ConfigConst.BLOCKS_SIZE);
+    @Getter
+    private final int increaseDifficultyAfter = Config.getInt(ConfigConst.INCREASE_DIFFICULTY_AFTER);
+    @Getter
+    private int miningDifficulty = Config.getInt(ConfigConst.MINING_DIFFICULTY);
 
-    private static Blockchain instance;
     private final List<Block> blocks;
-    public int difficultyCount;
+    private int difficultyCount;
 
-    private Blockchain() {
+    public Blockchain() {
         this.blocks = new ArrayList<>();
 
         //Creating the Genesis block
@@ -22,14 +27,7 @@ public class Blockchain {
         difficultyCount = 1;
     }
 
-    public static Blockchain get() {
-        if(instance == null)
-            instance = new Blockchain();
-
-        return instance;
-    }
-
-    public Block createNewBlock(List<Transaction> transactions) {
+    protected Block createNewBlock(List<Transaction> transactions) {
         String previousHash = blocks.get(blocks.size()-1).getHash();
         long nextHeight = blocks.size();
 
@@ -37,7 +35,7 @@ public class Blockchain {
         return new Block(transactions, previousHash, nextHeight);
     }
 
-    public void addBlock(Block block) {
+    protected void addBlock(Block block) {
         String previousHash = blocks.get(blocks.size()-1).getHash();
 
         if(previousHash.equals(block.getPreviousHash())) {
@@ -64,9 +62,13 @@ public class Blockchain {
         }
     }
 
+    protected String getLastHash() {
+        return blocks.get(blocks.size()-1).getHash();
+    }
+
     private void difficultyCheck() {
-        if(difficultyCount >= INCREASE_DIFFICULTY_AFTER) {
-            MINING_DIFFICULTY++;
+        if(difficultyCount >= increaseDifficultyAfter) {
+            miningDifficulty++;
             difficultyCount = 0;
         }
     }

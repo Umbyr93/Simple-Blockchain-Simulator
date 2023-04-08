@@ -1,15 +1,17 @@
-package ur.project.simpleblockchainsimulator.chain;
+package ur.project.simpleblockchainsimulator.core;
 
 
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import ur.project.simpleblockchainsimulator.transfer.Transaction;
 import ur.project.simpleblockchainsimulator.utils.SHA256;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class Block {
     @Getter(AccessLevel.PROTECTED)
     private List<Transaction> transactions;
@@ -34,6 +36,7 @@ public class Block {
     private String nonce;
 
     protected Block(List<Transaction> transactions, String previousHash, long height) {
+        log.info("Creating block with height: " + height);
         this.transactions = transactions;
         this.previousHash = previousHash;
         this.timestamp = System.currentTimeMillis();
