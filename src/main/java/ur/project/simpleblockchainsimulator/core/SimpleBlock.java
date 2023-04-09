@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class Block {
+public class SimpleBlock {
     @Getter(AccessLevel.PROTECTED)
     private List<Transaction> transactions;
 
@@ -35,7 +35,7 @@ public class Block {
     @Setter(AccessLevel.PUBLIC)
     private String nonce;
 
-    protected Block(List<Transaction> transactions, String previousHash, long height) {
+    protected SimpleBlock(List<Transaction> transactions, String previousHash, long height) {
         log.info("Creating block with height: " + height);
         this.transactions = transactions;
         this.previousHash = previousHash;
@@ -44,7 +44,7 @@ public class Block {
         this.merkleRoot = merkleRoot();
     }
 
-    protected Block(long height) {
+    protected SimpleBlock(long height) {
         this.timestamp = System.currentTimeMillis();
         this.height = height;
         this.hash = SHA256.generateHash(timestamp + String.valueOf(height));

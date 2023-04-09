@@ -11,12 +11,11 @@ import java.util.List;
 
 @Slf4j
 public class SimpleMiner implements Miner {
-    private Blockchain blockchain;
+    private final SimpleBlockchain simpleBlockchain;
     private List<Transaction> transactionPool = new ArrayList<>();
 
-    @Override
-    public void setBlockchain(Blockchain blockchain) {
-        this.blockchain = blockchain;
+    public SimpleMiner(SimpleBlockchain simpleBlockchain) {
+        this.simpleBlockchain = simpleBlockchain;
     }
 
     @Override
@@ -24,29 +23,29 @@ public class SimpleMiner implements Miner {
         transactionPool.add(transaction);
         log.info("Retrieved transaction with hash: {}", transaction.getHash());
 
-        if(blockchain.getBlocksSize() == transactionPool.size()) {
-            Block block = blockchain.createNewBlock(transactionPool);
-            proofOfWork(block);
-            blockchain.addBlock(block);
+        if(simpleBlockchain.getBlocksSize() == transactionPool.size()) {
+            SimpleBlock simpleBlock = simpleBlockchain.createNewBlock(transactionPool);
+            proofOfWork(simpleBlock);
+            simpleBlockchain.addBlock(simpleBlock);
         }
     }
 
-    private void proofOfWork(Block block) {
-        log.info("Starting proof of work with difficulty: {}", blockchain.getMiningDifficulty());
-        String target = "0".repeat(blockchain.getMiningDifficulty());
+    private void proofOfWork(SimpleBlock simpleBlock) {
+        log.info("Starting proof of work with difficulty: {}", simpleBlockchain.getMiningDifficulty());
+        String target = "0".repeat(simpleBlockchain.getMiningDifficulty());
 
         String serializedData = new Gson().toJson(transactionPool);
-        String blockHash = SHA256.generateHash(block.getTimestamp() + block.getHeight() + serializedData +
-                block.getPreviousHash());
+        String blockHash = SHA256.generateHash(simpleBlock.getTimestamp() + simpleBlock.getHeight() + serializedData +
+                simpleBlock.getPreviousHash());
 
         long testNonce = 0;
         boolean nonceFound = false;
         while(!nonceFound) {
             String testHash = SHA256.generateHash(blockHash + testNonce);
 
-            if(testHash.substring(0, blockchain.getMiningDifficulty()).equals(target)) {
-                block.setHash(testHash);
-                block.setNonce(String.valueOf(testNonce));
+            if(testHash.substring(0, simpleBlockchain.getMiningDifficulty()).equals(target)) {
+                simpleBlock.setHash(testHash);
+                simpleBlock.setNonce(String.valueOf(testNonce));
                 transactionPool = new ArrayList<>();
 
                 nonceFound = true;

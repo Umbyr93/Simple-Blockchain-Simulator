@@ -14,9 +14,8 @@ public class SimpleNetwork implements Network {
     private final BlockingQueue<Transaction> transactionQueue;
     private boolean isStarted;
 
-    public SimpleNetwork(Blockchain blockchain, Miner miner) {
+    public SimpleNetwork(Miner miner) {
         this.miner = miner;
-        this.miner.setBlockchain(blockchain);
         this.transactionQueue = new LinkedBlockingQueue<>();
     }
 
@@ -34,6 +33,7 @@ public class SimpleNetwork implements Network {
         while(isStarted) {
             try {
                 //Stays blocked until a new element is added to the queue
+                // so this isn't actively cycling.
                 miner.mine(transactionQueue.take());
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
