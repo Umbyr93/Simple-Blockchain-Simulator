@@ -1,7 +1,13 @@
 package ur.project.simpleblockchainsimulator.core.interfaces;
 
-import ur.project.simpleblockchainsimulator.transfer.Transaction;
+import ur.project.simpleblockchainsimulator.core.SimpleBlock;
+import ur.project.simpleblockchainsimulator.core.Transaction;
+
+import java.util.Optional;
 
 public interface Miner {
-    void mine(Transaction transaction);
+    Optional<SimpleBlock> mine(Transaction transaction);
+    Optional<SimpleBlock> resumeMining();
+    void cleanPool();
+    boolean hasPendingTransactions();
 }

@@ -3,56 +3,77 @@ package ur.project.simpleblockchainsimulator.core;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import ur.project.simpleblockchainsimulator.core.interfaces.Miner;
-import ur.project.simpleblockchainsimulator.transfer.Transaction;
 import ur.project.simpleblockchainsimulator.utils.SHA256;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 public class SimpleMiner implements Miner {
-    private final SimpleBlockchain simpleBlockchain;
-    private List<Transaction> transactionPool = new ArrayList<>();
+    private final SimpleBlockchain blockchain;
+    private final List<Transaction> transactionPool = new ArrayList<>();
 
-    public SimpleMiner(SimpleBlockchain simpleBlockchain) {
-        this.simpleBlockchain = simpleBlockchain;
+    public SimpleMiner(SimpleBlockchain blockchain) {
+        this.blockchain = blockchain;
     }
 
     @Override
-    public void mine(Transaction transaction) {
+    public Optional<SimpleBlock> mine(Transaction transaction) {
         transactionPool.add(transaction);
-        log.info("Retrieved transaction with hash: {}", transaction.getHash());
+        log.info("Added transaction {} to the pool", transaction.fourDigitsHash());
 
-        if(simpleBlockchain.getBlocksSize() == transactionPool.size()) {
-            SimpleBlock simpleBlock = simpleBlockchain.createNewBlock(transactionPool);
-            proofOfWork(simpleBlock);
-            simpleBlockchain.addBlock(simpleBlock);
+        if(transactionPool.size() >= blockchain.getBlocksSize()) {
+            SimpleBlock newBlock = blockchain.createNewBlock(transactionPool.subList(0, transactionPool.size()));
+            proofOfWork(newBlock);
+
+            return Optional.of(newBlock);
         }
+
+        return Optional.empty();
     }
 
-    private void proofOfWork(SimpleBlock simpleBlock) {
-        log.info("Starting proof of work with difficulty: {}", simpleBlockchain.getMiningDifficulty());
-        String target = "0".repeat(simpleBlockchain.getMiningDifficulty());
+    @Override
+    public Optional<SimpleBlock> resumeMining() {
+        SimpleBlock newBlock = blockchain.createNewBlock(transactionPool.subList(0, transactionPool.size()));
+        proofOfWork(newBlock);
+
+        return Optional.of(newBlock);
+    }
+
+    private void proofOfWork(SimpleBlock newBlock) {
+        log.info("Starting proof of work with difficulty: {}", blockchain.getMiningDifficulty());
+        String target = "0".repeat(blockchain.getMiningDifficulty());
 
         String serializedData = new Gson().toJson(transactionPool);
-        String blockHash = SHA256.generateHash(simpleBlock.getTimestamp() + simpleBlock.getHeight() + serializedData +
-                simpleBlock.getPreviousHash());
+        String blockHash = SHA256.generateHash(newBlock.getTimestamp() + newBlock.getHeight() + serializedData +
+                newBlock.getPreviousHash());
 
         long testNonce = 0;
         boolean nonceFound = false;
         while(!nonceFound) {
             String testHash = SHA256.generateHash(blockHash + testNonce);
 
-            if(testHash.substring(0, simpleBlockchain.getMiningDifficulty()).equals(target)) {
-                simpleBlock.setHash(testHash);
-                simpleBlock.setNonce(String.valueOf(testNonce));
-                transactionPool = new ArrayList<>();
+            if(testHash.substring(0, blockchain.getMiningDifficulty()).equals(target)) {
+                newBlock.setHash(testHash);
+                newBlock.setNonce(String.valueOf(testNonce));
 
                 nonceFound = true;
-                log.info("Nonce found, linking the new block to the Blockchain");
+                log.info("Nonce found, created block {}. Sending to the network for validation...", newBlock.fourDigitsHash());
             }
 
             testNonce++;
         }
+    }
+
+    @Override
+    public void cleanPool() {
+        //Removes the transactions we just added to the blockchain
+        transactionPool.subList(0, blockchain.getBlocksSize()).clear();
+    }
+
+    @Override
+    public boolean hasPendingTransactions() {
+        return transactionPool.size() >= blockchain.getBlocksSize();
     }
 }

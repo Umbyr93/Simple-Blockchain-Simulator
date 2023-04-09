@@ -1,4 +1,4 @@
-package ur.project.simpleblockchainsimulator.transfer;
+package ur.project.simpleblockchainsimulator.core;
 
 public class Wallet {
     private String walletAddress;

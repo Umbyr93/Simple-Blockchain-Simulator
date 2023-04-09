@@ -4,39 +4,26 @@ package ur.project.simpleblockchainsimulator.core;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import ur.project.simpleblockchainsimulator.transfer.Transaction;
 import ur.project.simpleblockchainsimulator.utils.SHA256;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
+@Getter(value = AccessLevel.PROTECTED)
 public class SimpleBlock {
-    @Getter(AccessLevel.PROTECTED)
-    private List<Transaction> transactions;
-
-    @Getter(AccessLevel.PUBLIC)
-    private String previousHash;
-
-    @Getter(AccessLevel.PUBLIC)
     private final long timestamp;
-
-    @Getter(AccessLevel.PUBLIC)
+    private final long height;
+    private List<Transaction> transactions;
+    private String previousHash;
     private String merkleRoot;
 
-    @Getter(AccessLevel.PUBLIC)
-    private final long height;
-
-    @Setter(AccessLevel.PUBLIC)
-    @Getter(AccessLevel.PROTECTED)
+    @Setter(AccessLevel.PROTECTED)
     private String hash;
 
-    @Setter(AccessLevel.PUBLIC)
+    @Setter(AccessLevel.PROTECTED)
     private String nonce;
 
     protected SimpleBlock(List<Transaction> transactions, String previousHash, long height) {
-        log.info("Creating block with height: " + height);
         this.transactions = transactions;
         this.previousHash = previousHash;
         this.timestamp = System.currentTimeMillis();
@@ -127,5 +114,10 @@ public class SimpleBlock {
             levelOffset += levelSize;
         }
         return tree;
+    }
+
+    protected String fourDigitsHash() {
+        int length = hash.length();
+        return hash.substring(length-4, length);
     }
 }
