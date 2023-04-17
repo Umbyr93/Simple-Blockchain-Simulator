@@ -11,7 +11,7 @@ public class SimpleBlockchain {
     private int startingMiningDifficulty = 3;
 
     @Getter@Setter
-    private int blocksSize = 2;
+    private int blocksSize = 1;
     @Getter@Setter
     private int increaseDifficultyAfter = 15;
     @Getter

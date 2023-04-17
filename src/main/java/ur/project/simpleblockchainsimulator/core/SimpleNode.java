@@ -1,6 +1,7 @@
 package ur.project.simpleblockchainsimulator.core;
 
 import lombok.extern.slf4j.Slf4j;
+import ur.project.simpleblockchainsimulator.core.exceptions.ApprovationException;
 import ur.project.simpleblockchainsimulator.core.interfaces.Node;
 
 import java.util.List;

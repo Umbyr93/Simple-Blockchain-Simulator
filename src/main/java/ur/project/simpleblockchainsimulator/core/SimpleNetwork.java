@@ -2,6 +2,8 @@ package ur.project.simpleblockchainsimulator.core;
 
 import lombok.extern.slf4j.Slf4j;
 import ur.project.simpleblockchainsimulator.core.enums.TransactionStatus;
+import ur.project.simpleblockchainsimulator.core.exceptions.ApprovationException;
+import ur.project.simpleblockchainsimulator.core.exceptions.NetworkException;
 import ur.project.simpleblockchainsimulator.core.interfaces.Miner;
 import ur.project.simpleblockchainsimulator.core.interfaces.Network;
 import ur.project.simpleblockchainsimulator.core.interfaces.Node;
@@ -71,7 +73,7 @@ public class SimpleNetwork implements Network {
                 allTransactions.add(transaction);
             }).start();
         else
-            throw new RuntimeException("Network offline, couldn't connect");
+            throw new NetworkException("Network offline, couldn't connect");
     }
 
     @Override
