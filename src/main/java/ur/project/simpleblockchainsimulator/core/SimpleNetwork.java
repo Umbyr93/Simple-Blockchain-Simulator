@@ -20,7 +20,10 @@ public class SimpleNetwork implements Network {
     private final List<Transaction> allTransactions = new ArrayList<>();
     private boolean isStarted;
 
-    public SimpleNetwork(Miner miner, Node node) {
+    public SimpleNetwork(SimpleBlockchain blockchain, Node node, Miner miner) {
+        node.setBlockChain(blockchain);
+        miner.setBlockChain(blockchain);
+
         this.miner = miner;
         this.node = node;
         this.transactionQueue = new LinkedBlockingQueue<>();

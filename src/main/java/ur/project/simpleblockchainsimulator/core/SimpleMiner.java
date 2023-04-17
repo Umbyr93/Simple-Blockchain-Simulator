@@ -11,12 +11,8 @@ import java.util.Optional;
 
 @Slf4j
 public class SimpleMiner implements Miner {
-    private final SimpleBlockchain blockchain;
+    private SimpleBlockchain blockchain;
     private final List<Transaction> transactionPool = new ArrayList<>();
-
-    public SimpleMiner(SimpleBlockchain blockchain) {
-        this.blockchain = blockchain;
-    }
 
     @Override
     public Optional<SimpleBlock> mine(Transaction transaction) {
@@ -75,5 +71,10 @@ public class SimpleMiner implements Miner {
     @Override
     public boolean hasPendingTransactions() {
         return transactionPool.size() >= blockchain.getBlocksSize();
+    }
+
+    @Override
+    public void setBlockChain(SimpleBlockchain blockchain) {
+        this.blockchain = blockchain;
     }
 }

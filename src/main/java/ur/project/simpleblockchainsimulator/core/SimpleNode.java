@@ -6,12 +6,8 @@ import ur.project.simpleblockchainsimulator.core.interfaces.Node;
 import java.util.List;
 
 @Slf4j
-public class SimpleFullNode implements Node {
-    private final SimpleBlockchain blockChain;
-
-    public SimpleFullNode(SimpleBlockchain blockChain) {
-        this.blockChain = blockChain;
-    }
+public class SimpleNode implements Node {
+    private SimpleBlockchain blockChain;
 
     @Override
     public void approve(SimpleBlock block) {
@@ -53,5 +49,10 @@ public class SimpleFullNode implements Node {
         }
 
         log.info("Blockchain valid");
+    }
+
+    @Override
+    public void setBlockChain(SimpleBlockchain blockChain) {
+        this.blockChain = blockChain;
     }
 }
