@@ -5,7 +5,7 @@
 
 	<groupId>ur.project</groupId>
 	<artifactId>simple-blockchain-simulator</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1-SNAPSHOT</version>
 	<name>simple-blockchain-simulator</name>
 	<description>A Simple Blockchain Simulator</description>
 
