@@ -84,15 +84,15 @@ public class SimpleNetwork implements Network {
     }
 
     @Override
-    public void stop() {
-        isStarted = false;
-        log.info("Network stopped");
-    }
-
-    @Override
     synchronized public Optional<Transaction> searchTransaction(String hash) {
         return allTransactions.stream()
                 .filter(t -> hash.equals(t.getHash()))
                 .findFirst();
+    }
+
+    @Override
+    public void close() {
+        isStarted = false;
+        log.info("Network stopped");
     }
 }

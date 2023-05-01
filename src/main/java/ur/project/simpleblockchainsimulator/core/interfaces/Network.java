@@ -4,9 +4,9 @@ import ur.project.simpleblockchainsimulator.core.Transaction;
 
 import java.util.Optional;
 
-public interface Network {
+public interface Network extends AutoCloseable {
     void queueTransaction(Transaction transaction);
     void start();
-    void stop();
+    void close();
     Optional<Transaction> searchTransaction(String hash);
 }
